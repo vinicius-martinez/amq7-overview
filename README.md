@@ -14,6 +14,7 @@ For additional details, please refer to [Additional References](#demo-additional
 
 1. [Installing AMQ-7.2 Broker](#demo-step-1)
 2. [Create a Broker](#demo-step-2)
+3. [Explore AMQ-7.2 Console](#demo-step-3)
 
 ### Installing AMQ-7.2 Broker <a name="demo-step-1"></a>
 
@@ -44,27 +45,46 @@ drwxrwxr-x@  7 vmartine  staff    224 Jun 21 04:40 schema
 drwxr-xr-x@ 16 vmartine  staff    512 Nov  7 17:10 web
 ```
 
+### Create a Broker <a name="demo-step-2"></a>
 
+* Create a **brokers** directory within *$AMQ_HOME*:
+  * *this is step is optional, however it's a good practice since we can easily perform administrative tasks such as cleanup, backup and restore without compromising the default AMQ7 files*
 
+```
+cd *$AMQ_HOME*
+mkdir brokers
+```
 
+* Create a broker (e.g broker01):
+
+```
+./bin/artemis create brokers/broker01
+```
+
+* Inform both username and passwords of your choice (e.g admin / admin) and allow *anonymous access*
+
+* Check if **broker01**  directory has been created within *$AMQ_HOME* and the following directories are present:
+
+```
+$ ll -l
+total 0
+drwxr-xr-x   9 vmartine  staff  288 Nov  7 18:12 .
+drwxr-xr-x   3 vmartine  staff   96 Nov  7 17:51 ..
+drwxr-xr-x   4 vmartine  staff  128 Nov  7 17:51 bin
+drwxr-xr-x   6 vmartine  staff  192 Nov  7 18:12 data
+drwxr-xr-x  11 vmartine  staff  352 Nov  7 17:51 etc
+drwxr-xr-x   2 vmartine  staff   64 Nov  7 17:51 lib
+drwxr-xr-x   3 vmartine  staff   96 Nov  7 18:12 log
+drwxr-xr-x   2 vmartine  staff   64 Nov  7 18:12 tmp
+```
+
+* Navigate to **broker01** directory and start this instance:
+
+```
+cd $AMQ_HOME/brokers/broker01/
+./bin/artemis run
+```
+
+### Explore AMQ-7.2 Console <a name="demo-step-3"></a>
 
 ## Additional References <a name="demo-additional-references">
-
-[Docker Port](https://docs.docker.com/engine/reference/commandline/port/)
-
-[Realm](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#the_master_realm)
-
-[Managing Clients](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#clients)
-[Roles](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#roles)
-
-[Login Page Settings](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#login_page_settings)
-
-[Themes](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#themes)
-
-[Authentication Flow](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#authentication-flows)
-
-[User Required Actions](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#required_actions)
-
-[Social Identity Providers](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#social_identity_providers)
-
-[OTP](https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.2/html-single/server_administration_guide/#otp_policies)
