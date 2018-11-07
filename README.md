@@ -27,7 +27,7 @@ unzip amq-broker-7.2.0-bin.zip
 
 * Check if the **amq-broker-7.2.0** directory is successfully created and the following directories are within it:
 
-  * *from now on we're going to refer to $AMQ_HOME as the current location of you amq-7.2 broker location* 
+  * *from now on we're going to refer to $AMQ_HOME as the current location of you amq-7.2 broker installation*
 
 ```
 $ ls -l
