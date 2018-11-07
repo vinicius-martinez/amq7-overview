@@ -87,4 +87,6 @@ cd $AMQ_HOME/brokers/broker01/
 
 ### Explore AMQ-7.2 Console <a name="demo-step-3"></a>
 
+* By default **AMQ 7.2 Console** is available at port *8161*, therefore in order to access it just open a browser of your choice and try to access *[http://localhost:8161](http://localhost:8161)* using the credentials informed on [Lab 2](#demo-step-2)
+
 ## Additional References <a name="demo-additional-references">
