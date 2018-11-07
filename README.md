@@ -27,6 +27,8 @@ unzip amq-broker-7.2.0-bin.zip
 
 * Check if the **amq-broker-7.2.0** directory is successfully created and the following directories are within it:
 
+  * *from now on we're going to refer to $AMQ_HOME as the current location of you amq-7.2 broker location* 
+
 ```
 $ ls -l
 total 72
@@ -42,7 +44,7 @@ drwxrwxr-x@  7 vmartine  staff    224 Jun 21 04:40 schema
 drwxr-xr-x@ 16 vmartine  staff    512 Nov  7 17:10 web
 ```
 
-  * *from now on we're going to refer to $AMQ_HOME as the current location of you amq-7.2 broker location* 
+
 
 
 
