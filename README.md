@@ -618,10 +618,26 @@ $AMQ_HOME/bin/artemis producer --verbose --user admin --password admin --message
 
 * Download legacy **activemq** client from *[MVN Repository](https://mvnrepository.com/artifact/org.apache.activemq/activemq-all/5.14.5)*
 
-* Start the **consumer** using *failover*
+* Start the **consumer** using *Client Failover* features:
 
 ```
 java -jar activemq-all-5.14.5.jar consumer --brokerUrl 'failover:(tcp://localhost:61616,tcp://localhost:61617)' --user admin --password admin --destination queue://failover
+```
+
+* The following output is expected:
+
+```
+java -jar activemq-all-5.14.5.jar consumer --brokerUrl 'failover:(tcp://localhost:61616,tcp://localhost:61617)' --user admin --password admin --destination queue://failover
+ INFO | Connecting to URL: failover:(tcp://localhost:61616,tcp://localhost:61617) (admin:admin)
+ INFO | Consuming queue://failover
+ INFO | Sleeping between receives 0 ms
+ INFO | Running 1 parallel threads
+ INFO | Successfully connected to tcp://localhost:61617
+ INFO | consumer-1 wait until 1000 messages are consumed
+ INFO | consumer-1 Received test message: 0
+ INFO | consumer-1 Received test message: 1
+ INFO | consumer-1 Received test message: 2
+ ...
 ```
 
 ## Additional References <a name="demo-additional-references">
