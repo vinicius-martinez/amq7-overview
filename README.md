@@ -148,7 +148,7 @@ cd $AMQ_HOME/brokers/broker01/
 * The following output is expected:
 
 ```
-$ ./bin/artemis producer --destination address.broker01 --message-count 30 --url tcp://localhost:61616
+./bin/artemis producer --destination address.broker01 --message-count 30 --url tcp://localhost:61616
 Producer ActiveMQQueue[address.broker01], thread=0 Started to calculate elapsed time ...
 
 Producer ActiveMQQueue[address.broker01], thread=0 Produced: 30 messages
@@ -171,10 +171,267 @@ cd $AMQ_HOME/brokers/broker01/
 
 * Plase notice that **Message Count** property for each destination is now *0*;
 
-### Create Java/JMS and NodeJS Clients <a name="demo-step-5"></a>
+### Create Java/JMS and NodeJS Clients <a name="demo-step-6"></a>
 
 * Download both **AMQ JMS Client** and **JavaScript Client** from [Red Hat Developers AMQ Download](https://developers.redhat.com/products/amq/download/)
 
 * Uncompress both files in a directory of your choice
+
+* Make sure you have configured your *settings.xml* enabling Red Hat repositories. Example:
+
+```
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+
+        <!-- Configure the AMQ7 Maven repository -->
+        <profile>
+            <id>amq-qpid-jms</id>
+            <repositories>
+                <repository>
+                    <id>amq-qpid-jms</id>
+                    <url>file:///path/to/extracted/maven-repository</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>amq7-repository</id>
+                    <url>file:///path/to/extracted/maven-repository</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+        <!-- Configure the JBoss GA Maven repository -->
+        <profile>
+            <id>jboss-ga-repository</id>
+            <repositories>
+                <repository>
+                    <id>jboss-ga-repository</id>
+                    <url>https://maven.repository.redhat.com/ga</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jboss-ga-repository</id>
+                    <url>https://maven.repository.redhat.com/ga</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+        <!-- Configure the JBoss Early Access Maven repository -->
+        <profile>
+            <id>jboss-earlyaccess-repository</id>
+            <repositories>
+                <repository>
+                    <id>jboss-earlyaccess-repository</id>
+                    <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jboss-earlyaccess-repository</id>
+                    <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>amq-qpid-jms</activeProfile>
+        <activeProfile>jboss-ga-repository</activeProfile>
+        <activeProfile>jboss-earlyaccess-repository</activeProfile>
+    </activeProfiles>
+
+</settings>
+```
+
+* From **AMQ JMS Client** directory, go to *examples* folder an run a *clean/install*:
+
+```
+cd apache-qpid-jms-0.34.0.redhat-00002/examples
+mvn clean install
+```
+
+* Review *jndi.properties* and *HelloWorld.java* files for a better comprehension;
+
+* Execute the following command in order to send and consume a  *Hello World Message*
+
+```
+cd apache-qpid-jms-0.34.0.redhat-00002/examples
+mvn clean install
+mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests
+java -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
+
+Hello world!
+```
+
+* Access **AMQ Console** and notice that we have a new *queue* under *addresses*;
+
+* From **JavaScript Client** directory, execute:
+
+```
+npm install debug
+npm install yargs
+```
+
+* From *nodejs-rhea-0.2.15-1/node_modules/rhea* directory execute:
+
+```
+npm install
+npm run browserify
+```
+
+* Switch back to *nodejs-rhea-0.2.15-1* folder and create a new directory (e.g example):
+
+```
+mkdir example
+```
+
+* Create a **send.js** file with the following content:
+
+```
+"use strict";
+
+var rhea = require("rhea");
+var url = require("url");
+
+if (process.argv.length !== 5) {
+    console.error("Usage: send.js <connection-url> <address> <message-body>");
+    process.exit(1);
+}
+
+var conn_url = url.parse(process.argv[2]);
+var address = process.argv[3];
+var message_body = process.argv[4];
+
+var container = rhea.create_container();
+
+container.on("sender_open", function (event) {
+    console.log("SEND: Opened sender for target address '" +
+                event.sender.target.address + "'");
+});
+
+container.on("sendable", function (event) {
+    var message = {
+        "body": message_body
+    };
+
+    event.sender.send(message);
+
+    console.log("SEND: Sent message '" + message.body + "'");
+
+    event.sender.close();
+    event.connection.close();
+});
+
+var opts = {
+    host: conn_url.hostname,
+    port: conn_url.port || 61616
+};
+
+var conn = container.connect(opts);
+conn.open_sender(address);
+```
+
+* Create a **receive.js** file with the following content:
+
+```
+"use strict";
+
+var rhea = require("rhea");
+var url = require("url");
+
+if (process.argv.length !== 4 && process.argv.length !== 5) {
+    console.error("Usage: receive.js <connection-url> <address> [<message-count>]");
+    process.exit(1);
+}
+
+var conn_url = url.parse(process.argv[2]);
+var address = process.argv[3];
+var desired = 0;
+var received = 0;
+
+if (process.argv.length === 5) {
+    desired = parseInt(process.argv[4]);
+}
+
+var container = rhea.create_container();
+
+container.on("receiver_open", function (event) {
+    console.log("RECEIVE: Opened receiver for source address '" +
+                event.receiver.source.address + "'");
+});
+
+container.on("message", function (event) {
+    var message = event.message;
+
+    console.log("RECEIVE: Received message '" + message.body + "'");
+
+    received++;
+
+    if (received == desired) {
+        event.receiver.close();
+        event.connection.close();
+    }
+});
+
+var opts = {
+    host: conn_url.hostname,
+    port: conn_url.port || 61616
+};
+
+var conn = container.connect(opts);
+conn.open_receiver(address);
+```
+
+* Open a new terminal and start *receive.js*. Example:
+
+```
+node receive.js amqp://localhost node-queue
+```
+
+* Open a new terminal and **send** some messages via *send.js*. Example:
+
+```
+node send.js amqp://localhost node-queue hello
+node send.js amqp://localhost node-queue hello2
+node send.js amqp://localhost node-queue hello3
+node send.js amqp://localhost node-queue hello4
+node send.js amqp://localhost node-queue hello5
+```
 
 ## Additional References <a name="demo-additional-references">
