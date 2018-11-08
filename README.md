@@ -452,7 +452,6 @@ RECEIVE: Received message 'hello2'
 
 ```
 ./bin/artemis create brokers/master --name master --user admin --password admin --allow-anonymous
-
 ./bin/artemis create brokers/slave --name slave --user admin --password admin --allow-anonymous --port-offset 1
 ```
 
